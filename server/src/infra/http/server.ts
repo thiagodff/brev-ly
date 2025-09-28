@@ -9,7 +9,7 @@ import {
 import { fastifySwagger } from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { fastify } from 'fastify'
-import { linksRoute } from '../routes/linksRoute'
+import { linksRoute } from '@/infra/http/routes/linksRoute'
 
 const server = fastify()
 
