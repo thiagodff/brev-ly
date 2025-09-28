@@ -5,7 +5,10 @@
   "description": "API to manage URL shortening",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch --env-file .env src/infra/http/server.ts"
+    "dev": "tsx watch --env-file .env src/infra/http/server.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "keywords": [],
   "author": "thiagodff",
@@ -14,6 +17,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.2.4",
     "@types/node": "^24.5.2",
+    "drizzle-kit": "^0.31.5",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
@@ -21,8 +25,10 @@
     "@fastify/cors": "^11.1.0",
     "@fastify/swagger": "^9.5.2",
     "@fastify/swagger-ui": "^5.2.3",
+    "drizzle-orm": "^0.44.5",
     "fastify": "^5.6.0",
     "fastify-type-provider-zod": "^6.0.0",
+    "postgres": "^3.4.7",
     "zod": "^4.1.11"
   }
 }
