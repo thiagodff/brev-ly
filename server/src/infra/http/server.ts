@@ -1,3 +1,4 @@
+import { env } from '@/env'
 import { fastifyCors } from '@fastify/cors'
 import { fastify } from 'fastify'
 
@@ -9,9 +10,9 @@ server.register(fastifyCors, {
 
 server
   .listen({
-    port: 3333,
+    port: env.PORT,
     host: '0.0.0.0',
   })
   .then(() => {
-    console.log('HTTP server running on http://0.0.0.0:3333')
+    console.log(`🔗 Brevly server running on http://0.0.0.0:${env.PORT}`)
   })
