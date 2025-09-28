@@ -2,9 +2,12 @@ import { env } from '@/env'
 import { fastifyCors } from '@fastify/cors'
 import {
   hasZodFastifySchemaValidationErrors,
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
+import { fastifySwagger } from '@fastify/swagger'
+import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { fastify } from 'fastify'
 import { linksRoute } from '../routes/linksRoute'
 
@@ -31,6 +34,21 @@ server.setErrorHandler((error, request, reply) => {
 
 server.register(fastifyCors, {
   origin: '*',
+})
+
+server.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Brevly API',
+      description: 'API to manage URL shortening',
+      version: '1.0.0',
+    }
+  },
+  transform: jsonSchemaTransform,
+})
+
+server.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
 })
 
 server.register(linksRoute)
