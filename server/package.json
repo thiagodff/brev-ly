@@ -5,7 +5,7 @@
   "description": "API to manage URL shortening",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/infra/http/server.ts"
+    "dev": "tsx watch --env-file .env src/infra/http/server.ts"
   },
   "keywords": [],
   "author": "thiagodff",
