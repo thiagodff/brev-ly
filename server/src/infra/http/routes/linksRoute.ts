@@ -3,7 +3,8 @@ import { z } from 'zod/v4'
 import { db } from '@/infra/db'
 import { schema } from '@/infra/db/schemas'
 import { getLinkBySlug } from '@/app/functions/get-link-by-slug'
-import { isRight, unwrapEither } from '@/shared/either'
+import { isLeft, isRight } from '@/shared/either'
+import { deleteLinkBySlug } from '@/app/functions/delete-link-by-slug'
 
 export const linksRoute: FastifyPluginAsyncZod = async server => {
   server.post(
@@ -50,4 +51,33 @@ export const linksRoute: FastifyPluginAsyncZod = async server => {
 
       return reply.status(201).send()
   })
+
+  server.delete(
+    '/link/:slug',
+    {
+      schema: {
+        summary: 'Delete a shortened link',
+        params: z.object({
+          slug: z.string(),
+        }),
+        response: {
+          204: z.string().describe('Link deleted successfully'),
+          404: z.object({ message: z.string() }).describe('Link not found'),
+        },
+      }
+    },
+    async (request, reply) => {
+      const { slug } = request.params
+
+      const existingLink = await getLinkBySlug({ slug })
+
+      if (isLeft(existingLink)) {
+        return reply.status(404).send({ message: 'Link not found' })
+      }
+
+      await deleteLinkBySlug({ slug })
+
+      return reply.status(204).send()
+    }
+  )
 }
