@@ -3,9 +3,10 @@ import { z } from 'zod/v4'
 import { db } from '@/infra/db'
 import { schema } from '@/infra/db/schemas'
 import { getLinkBySlug } from '@/app/functions/get-link-by-slug'
-import { isLeft, isRight } from '@/shared/either'
+import { isLeft, isRight, unwrapEither } from '@/shared/either'
 import { deleteLinkBySlug } from '@/app/functions/delete-link-by-slug'
 import { incrementVisitLinksBySlug } from '@/app/functions/increment-visit-link-by-slug'
+import { getLinks } from '@/app/functions/get-links'
 
 export const linksRoute: FastifyPluginAsyncZod = async server => {
   server.post(
@@ -93,6 +94,43 @@ export const linksRoute: FastifyPluginAsyncZod = async server => {
       }
 
       return reply.status(200).send({ url, redirectCount })
+    }
+  )
+
+  server.get(
+    '/links',
+    {
+      schema: {
+        summary: 'Get all shortened links',
+        querystring: z.object({
+          page: z.coerce.number().optional().default(1),
+          pageSize: z.coerce.number().optional().default(20),
+        }),
+        response: {
+          201: z.object({
+            links: z.array(
+              z.object({
+                url: z.string(),
+                slug: z.string(),
+                redirectCount: z.number(),
+              })
+            ),
+            total: z.number(),
+          }).describe('List of all links'),
+        },
+      }
+    },
+    async (request, reply) => {
+      const { page, pageSize } = request.query
+
+      const result = await getLinks({
+        page,
+        pageSize,
+      })
+
+      const { links, total } = unwrapEither(result)
+
+      return reply.status(201).send({ links, total })
     }
   )
 
