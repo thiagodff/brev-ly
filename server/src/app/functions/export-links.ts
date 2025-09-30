@@ -10,6 +10,14 @@ type ExportLinksOutput = {
   reportUrl: string
 }
 
+interface Link {
+  id: string
+  url: string
+  slug: string
+  redirectCount: number
+  createdAt: Date
+}
+
 export async function exportLinks(): Promise<Either<never, ExportLinksOutput>> {
   const { sql, params } = db
     .select({
@@ -30,7 +38,7 @@ export async function exportLinks(): Promise<Either<never, ExportLinksOutput>> {
     columns: [
       { key: 'id', header: 'ID' },
       { key: 'url', header: 'URL' },
-      { key: 'slug', header: 'Slug' },
+      { key: 'slug', header: 'Shortened URL' },
       { key: 'redirect_count', header: 'Redirect Count' },
       { key: 'created_at', header: 'Created At' },
     ],
@@ -42,8 +50,9 @@ export async function exportLinks(): Promise<Either<never, ExportLinksOutput>> {
     cursor,
     new Transform({
       objectMode: true,
-      transform(chunks: unknown[], encoding, callback) {
+      transform(chunks: Link[], encoding, callback) {
         for (const chunk of chunks) {
+          chunk.slug = `http://brev.ly/${chunk.slug}`
           this.push(chunk)
         }
         callback()
