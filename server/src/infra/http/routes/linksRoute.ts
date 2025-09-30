@@ -5,6 +5,7 @@ import { schema } from '@/infra/db/schemas'
 import { getLinkBySlug } from '@/app/functions/get-link-by-slug'
 import { isLeft, isRight } from '@/shared/either'
 import { deleteLinkBySlug } from '@/app/functions/delete-link-by-slug'
+import { incrementVisitLinksBySlug } from '@/app/functions/increment-visit-link-by-slug'
 
 export const linksRoute: FastifyPluginAsyncZod = async server => {
   server.post(
@@ -51,6 +52,49 @@ export const linksRoute: FastifyPluginAsyncZod = async server => {
 
       return reply.status(201).send()
   })
+
+  server.get(
+    '/link/:slug',
+    {
+      schema: {
+        summary: 'Get a shortened link',
+        params: z.object({
+          slug: z.string(),
+        }),
+        querystring: z.object({
+          redirect: z.coerce.boolean().optional().default(false),
+        }),
+        response: {
+          200: z.object({
+            url: z.string(),
+            redirectCount: z.number(),
+          }).describe('Link found'),
+          301: z.object({ url: z.string() }).describe('Redirect to the original URL'),
+          404: z.object({ message: z.string() }).describe('Link not found'),
+        },
+      }
+    },
+    async (request, reply) => {
+      const { slug } = request.params
+      const { redirect } = request.query
+
+      const linkResult = await getLinkBySlug({ slug })
+
+      if (isLeft(linkResult)) {
+        return reply.status(404).send({ message: 'Link not found' })
+      }
+
+      let { url, redirectCount } = linkResult.right
+
+      if (redirect) {
+        redirectCount++
+        await incrementVisitLinksBySlug({ slug })
+        return reply.status(301).header('Location', url).send()
+      }
+
+      return reply.status(200).send({ url, redirectCount })
+    }
+  )
 
   server.delete(
     '/link/:slug',

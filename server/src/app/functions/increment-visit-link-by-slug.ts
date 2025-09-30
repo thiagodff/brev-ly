@@ -9,16 +9,16 @@ const getLinksBySlugInput = z.object({
   slug: z.string(),
 })
 
-type GetLinkBySlugInput = z.infer<typeof getLinksBySlugInput>
+type IncrementVisitLinksBySlugInput = z.infer<typeof getLinksBySlugInput>
 
-type GetLinkBySlugOutput = {
+type IncrementVisitLinksBySlugOutput = {
   url: string
   redirectCount: number
 }
 
-export async function getLinkBySlug(
-  input: GetLinkBySlugInput
-): Promise<Either<LinkNotFoundError, GetLinkBySlugOutput>> {
+export async function incrementVisitLinksBySlug(
+  input: IncrementVisitLinksBySlugInput
+): Promise<Either<LinkNotFoundError, IncrementVisitLinksBySlugOutput>> {
   const { slug } = getLinksBySlugInput.parse(input)
 
   const [link] = await db
@@ -32,6 +32,14 @@ export async function getLinkBySlug(
   if (!link) {
     return makeLeft(new LinkNotFoundError())
   }
+
+  // race condition possible
+  await db
+    .update(schema.links)
+    .set({
+      redirectCount: link.redirectCount + 1,
+    })
+    .where(eq(schema.links.slug, slug))
 
   return makeRight({ url: link.url, redirectCount: link.redirectCount })
 }
