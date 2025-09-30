@@ -9,7 +9,8 @@ import {
 import { fastifySwagger } from '@fastify/swagger'
 import { fastifySwaggerUi } from '@fastify/swagger-ui'
 import { fastify } from 'fastify'
-import { linksRoute } from '@/infra/http/routes/linksRoute'
+import { linksRoute } from '@/infra/http/routes/links'
+import { exportLinksRoute } from '@/infra/http/routes/export-links'
 
 const server = fastify()
 
@@ -52,6 +53,7 @@ server.register(fastifySwaggerUi, {
 })
 
 server.register(linksRoute)
+server.register(exportLinksRoute)
 
 server
   .listen({
