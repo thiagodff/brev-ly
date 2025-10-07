@@ -1,6 +1,6 @@
-import { Button } from "./ui/Button";
-import { Card } from "./ui/Card";
-import { Input } from "./ui/Input";
+import { Button } from "./ui/button";
+import { Card } from "./ui/card";
+import { Input } from "./ui/input";
 
 export function CreateLink() {
   return (
