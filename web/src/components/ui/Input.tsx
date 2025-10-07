@@ -3,10 +3,11 @@ import type { ComponentProps } from "react";
 
 interface InputProps extends ComponentProps<"input"> {
   id: string;
+  title?: string;
   error?: string;
 }
 
-export function Input({ id, error, ...props }: InputProps) {
+export function Input({ id, error, title, ...props }: InputProps) {
   return (
     <div className="group flex flex-col gap-2 text-gray-500 w-full">
       <label
@@ -14,7 +15,7 @@ export function Input({ id, error, ...props }: InputProps) {
         htmlFor={id}
         className="uppercase text-xs leading-3.5 font-medium data-[error=true]:not-group-focus-within:text-feedback-danger group-focus-within:text-blue-base"
       >
-        título
+        {title}
       </label>
       <input
         id={id}
