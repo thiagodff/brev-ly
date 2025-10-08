@@ -4,7 +4,7 @@ import { Input } from "./ui/input";
 
 export function CreateLink() {
   return (
-    <Card className="gap-5 md:gap-6">
+    <Card className="gap-5 md:gap-6 flex-5/12">
       <h2 className="text-lg leading-6 font-bold">Novo Link</h2>
 
       <div className="flex flex-col gap-4">
