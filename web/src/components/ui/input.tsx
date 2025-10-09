@@ -4,10 +4,11 @@ import type { ComponentProps } from "react";
 interface InputProps extends ComponentProps<"input"> {
   id: string;
   title?: string;
+  prefix?: string;
   error?: string;
 }
 
-export function Input({ id, error, title, ...props }: InputProps) {
+export function Input({ id, error, title, prefix, ...props }: InputProps) {
   return (
     <div className="group flex flex-col gap-2 text-gray-500 w-full">
       <label
@@ -17,13 +18,20 @@ export function Input({ id, error, title, ...props }: InputProps) {
       >
         {title}
       </label>
-      <input
-        id={id}
-        name={id}
+      <div
         data-error={!!error}
-        className="border border-gray-300 rounded-lg px-4 py-3.5 text-md placeholder:text-gray-400 text-gray-600 data-[error=true]:not-group-focus-within:border-feedback-danger group-focus-within:border-blue-base outline-none"
-        {...props}
-      />
+        className="flex items-center border border-gray-300 rounded-lg data-[error=true]:not-group-focus-within:border-feedback-danger group-focus-within:border-blue-base"
+      >
+        {prefix && <span className="text-gray-400 text-md pl-4">{prefix}</span>}
+        <input
+          id={id}
+          name={id}
+          className={`w-full rounded-r-lg px-4 py-3.5 text-md placeholder:text-gray-400 text-gray-600 outline-none ${
+            !prefix ? "rounded-lg" : "pl-0"
+          }`}
+          {...props}
+        />
+      </div>
       {error && (
         <div className="flex items-center gap-1">
           <WarningIcon size={12} className="text-feedback-danger mr-1" />

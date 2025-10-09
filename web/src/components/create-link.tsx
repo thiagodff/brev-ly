@@ -54,7 +54,7 @@ export function CreateLink() {
             id="slug"
             title="Link Encurtado"
             error={errors.slug?.message}
-            placeholder="brev.ly/"
+            prefix="brev.ly/"
             {...register("slug", {
               maxLength: { value: 30, message: "Máximo 30 caracteres" },
               required: { value: true, message: "Campo obrigatório" },
