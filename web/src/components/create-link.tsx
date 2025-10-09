@@ -3,6 +3,8 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createLink } from "../api/create-link";
 
 type Inputs = {
   url: string;
@@ -10,13 +12,23 @@ type Inputs = {
 };
 
 export function CreateLink() {
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: createLinkFn, isPending } = useMutation({
+    mutationFn: createLink,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["links"] });
+    },
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<Inputs> = async ({ url, slug }) =>
+    await createLinkFn({ url, slug });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -54,7 +66,9 @@ export function CreateLink() {
           />
         </div>
 
-        <Button type="submit">Salvar Link</Button>
+        <Button type="submit" disabled={isPending}>
+          {isPending ? "Salvando..." : "Salvar Link"}
+        </Button>
       </Card>
     </form>
   );
