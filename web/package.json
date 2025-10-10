@@ -17,6 +17,7 @@
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.64.0",
     "react-spinners": "^0.17.0",
+    "react-toastify": "^11.0.5",
     "tailwind-variants": "^1.0.0",
     "tailwindcss": "^4.1.13"
   },

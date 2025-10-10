@@ -3,6 +3,7 @@ import Logo from "./assets/Logo.svg?react";
 import { CreateLink } from "./components/create-link";
 import { LinkList } from "./components/link-list";
 import { queryClient } from "./lib/react-query";
+import { ToastContainer } from "react-toastify";
 
 export function App() {
   return (
@@ -18,6 +19,7 @@ export function App() {
           <LinkList />
         </div>
       </main>
+      <ToastContainer position="bottom-right" hideProgressBar closeOnClick />
     </QueryClientProvider>
   );
 }

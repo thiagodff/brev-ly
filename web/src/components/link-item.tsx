@@ -2,11 +2,17 @@ import { CopyIcon, TrashIcon } from "@phosphor-icons/react";
 import type { Link } from "./link-list";
 import { Divider } from "./ui/divider";
 import { IconButton } from "./ui/icon-button";
+import { toast } from "react-toastify";
 
 interface LinkItemProps extends Link {}
 
 export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
   const shortUrl = `${import.meta.env.VITE_FRONTEND_URL}/${slug}`;
+
+  const copyLinkToClipboard = () => {
+    navigator.clipboard.writeText(shortUrl);
+    toast.success("Link copiado para a área de transferência!");
+  };
 
   return (
     <li>
@@ -29,7 +35,7 @@ export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
           <span className="text-sm text-gray-500 leading-4 mr-5">
             {redirectCount} acessos
           </span>
-          <IconButton>
+          <IconButton onClick={copyLinkToClipboard}>
             <CopyIcon size={16} />
           </IconButton>
           <IconButton className="ml-1">
