@@ -6,15 +6,22 @@ import { IconButton } from "./ui/icon-button";
 interface LinkItemProps extends Link {}
 
 export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
+  const shortUrl = `${import.meta.env.VITE_FRONTEND_URL}/${slug}`;
+
   return (
     <li>
       <Divider />
 
       <div className="flex justify-between items-center w-full mt-4">
         <div className="flex flex-col gap-1">
-          <span className="text-md text-blue-base font-semibold leading-5">
+          <a
+            href={shortUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="text-md text-blue-base font-semibold leading-5"
+          >
             brev.ly/{slug}
-          </span>
+          </a>
           <span className="text-sm text-gray-500 leading-4">{url}</span>
         </div>
 

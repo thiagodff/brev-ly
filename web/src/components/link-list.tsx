@@ -27,8 +27,6 @@ export function LinkList() {
     linkList?.total === 0 || linkList?.error || !linkList
   );
 
-  console.log({ linkList });
-
   return (
     <Card className="w-full flex-7/12">
       <div className="flex justify-between items-center">
