@@ -23,12 +23,15 @@ export function CreateLink() {
 
   const {
     register,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
 
-  const onSubmit: SubmitHandler<Inputs> = async ({ url, slug }) =>
+  const onSubmit: SubmitHandler<Inputs> = async ({ url, slug }) => {
     await createLinkFn({ url, slug });
+    reset();
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
