@@ -34,8 +34,8 @@ export function CreateLink() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Card className="gap-5 md:gap-6 flex-5/12">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex-5/12">
+      <Card className="gap-5 md:gap-6">
         <h2 className="text-lg leading-6 font-bold">Novo Link</h2>
 
         <div className="flex flex-col gap-4">
