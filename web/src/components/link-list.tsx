@@ -3,9 +3,11 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Divider } from "./ui/divider";
 import { LinkItem } from "./link-item";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getLinks } from "../api/get-links";
 import { BarLoader, MoonLoader } from "react-spinners";
+import { exportCsvLinks } from "../api/export-csv-links";
+import { downloadUrl } from "../utils/download-url";
 
 export interface Link {
   url: string;
@@ -23,17 +25,34 @@ export function LinkList() {
     queryFn: getLinks,
   });
 
+  const { mutateAsync: exportCsvFn, isPending: isExporting } = useMutation({
+    mutationFn: exportCsvLinks,
+  });
+
   const isLinksListEmpty = Boolean(
     linkList?.total === 0 || linkList?.error || !linkList
   );
+
+  const handleExportLinks = async () => {
+    const { reportUrl } = await exportCsvFn();
+    await downloadUrl(reportUrl);
+  };
 
   return (
     <Card className="w-full flex-7/12">
       <div className="flex justify-between items-center">
         <h2 className="text-lg leading-6 font-bold">Meus Links</h2>
 
-        <Button variant="secondary" disabled={isLinksListEmpty}>
-          <DownloadSimpleIcon size={16} />
+        <Button
+          variant="secondary"
+          disabled={isLinksListEmpty || isExporting}
+          onClick={handleExportLinks}
+        >
+          {isExporting ? (
+            <MoonLoader size={12} color={"var(--color-gray-400)"} />
+          ) : (
+            <DownloadSimpleIcon size={16} />
+          )}
           Baixar CSV
         </Button>
       </div>
