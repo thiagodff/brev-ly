@@ -90,7 +90,7 @@ export const linksRoute: FastifyPluginAsyncZod = async server => {
       if (redirect) {
         redirectCount++
         await incrementVisitLinksBySlug({ slug })
-        return reply.status(301).header('Location', url).send()
+        return reply.status(200).send({ url, redirectCount })
       }
 
       return reply.status(200).send({ url, redirectCount })
