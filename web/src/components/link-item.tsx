@@ -40,7 +40,7 @@ export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
       <Divider />
 
       <div className="flex justify-between items-center w-full mt-4">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 pr-3">
           <a
             href={shortUrl}
             target="_blank"
@@ -53,7 +53,7 @@ export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
         </div>
 
         <div className="flex items-center">
-          <span className="text-sm text-gray-500 leading-4 mr-5">
+          <span className="text-sm text-gray-500 leading-4 mr-5 text-nowrap">
             {redirectCount} acessos
           </span>
           <IconButton onClick={copyLinkToClipboard}>
