@@ -1,7 +1,7 @@
 import { db } from "@/infra/db"
 import { schema } from "@/infra/db/schemas"
 import { Either, makeLeft, makeRight } from "@/shared/either"
-import { count } from "drizzle-orm"
+import { count, desc } from "drizzle-orm"
 import z from "zod"
 import { LinkNotFoundError } from "./errors/link-not-found"
 
@@ -38,6 +38,7 @@ export async function getLinks(
       createdAt: schema.links.createdAt,
     })
     .from(schema.links)
+    .orderBy(desc(schema.links.id))
     .limit(pageSize)
     .offset((page - 1) * pageSize),
     await db
