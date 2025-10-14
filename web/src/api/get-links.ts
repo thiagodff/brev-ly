@@ -10,7 +10,17 @@ interface LinksResponse {
   error?: string;
 }
 
-export async function getLinks(): Promise<LinksResponse> {
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/links`);
+interface GetLinksProps {
+  page?: number;
+  pageSize?: number;
+}
+
+export async function getLinks({
+  page = 1,
+  pageSize = 10,
+}: GetLinksProps): Promise<LinksResponse> {
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/links?page=${page}&pageSize=${pageSize}`
+  );
   return response.json();
 }

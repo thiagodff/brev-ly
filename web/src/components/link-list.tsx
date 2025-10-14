@@ -3,11 +3,12 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Divider } from "./ui/divider";
 import { LinkItem } from "./link-item";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getLinks } from "../api/get-links";
 import { BarLoader, MoonLoader } from "react-spinners";
 import { exportCsvLinks } from "../api/export-csv-links";
 import { downloadUrl } from "../utils/download-url";
+import { useEffect, useState } from "react";
 
 export interface Link {
   url: string;
@@ -16,13 +17,18 @@ export interface Link {
 }
 
 export function LinkList() {
+  const [links, setLinks] = useState<Link[]>([]);
+  const [page, setPage] = useState(1);
+
+  const queryClient = useQueryClient();
+
   const {
     data: linkList,
     isLoading,
     isFetching,
   } = useQuery({
-    queryKey: ["links"],
-    queryFn: getLinks,
+    queryKey: ["links", page],
+    queryFn: () => getLinks({ page }),
   });
 
   const { mutateAsync: exportCsvFn, isPending: isExporting } = useMutation({
@@ -37,6 +43,32 @@ export function LinkList() {
     const { reportUrl } = await exportCsvFn();
     await downloadUrl(reportUrl);
   };
+
+  const handleScrollLinksList = (event: React.UIEvent<HTMLElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } =
+      event.target as HTMLElement;
+
+    if ((scrollHeight - scrollTop) * 0.9 <= clientHeight && !isFetching) {
+      const totalPages = Math.ceil((linkList?.total ?? 0) / 10);
+      if (page < totalPages) {
+        setPage((oldPage) => oldPage + 1);
+        queryClient.prefetchQuery({
+          queryKey: ["links", page + 1],
+          queryFn: () => getLinks({ page: page + 1 }),
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    const totalPages = Math.ceil((linkList?.total ?? 0) / 10);
+    if (linkList?.links && page <= totalPages) {
+      setLinks((oldLinks) => {
+        const newLinks = linkList.links;
+        return [...oldLinks, ...newLinks];
+      });
+    }
+  }, [linkList?.links]);
 
   return (
     <Card className="w-full flex-7/12">
@@ -96,8 +128,11 @@ export function LinkList() {
                 className="mt-[-1px]"
               />
             )}
-            <ul className="w-full flex flex-col gap-4 max-h-[511px] overflow-auto scrollbar">
-              {linkList?.links.map(({ url, slug, redirectCount }) => (
+            <ul
+              className="w-full flex flex-col gap-4 max-h-[511px] overflow-auto scrollbar"
+              onScroll={handleScrollLinksList}
+            >
+              {links.map(({ url, slug, redirectCount }) => (
                 <LinkItem
                   key={slug}
                   url={url}
