@@ -11,7 +11,11 @@ interface LinkItemProps extends Link {}
 export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
   const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteLinkFn, isPending } = useMutation({
+  const {
+    mutateAsync: deleteLinkFn,
+    isPending,
+    isError,
+  } = useMutation({
     mutationFn: deleteLink,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
@@ -33,7 +37,11 @@ export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
     if (!confirmed) return;
 
     await deleteLinkFn(slug);
-    toast.success("Link excluído com sucesso!");
+    if (isError) {
+      toast.error("Ocorreu um erro ao excluir o link. Tente novamente.");
+    } else {
+      toast.success("Link excluído com sucesso!");
+    }
   };
 
   return (
