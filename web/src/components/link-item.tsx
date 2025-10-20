@@ -11,7 +11,7 @@ interface LinkItemProps extends Link {}
 export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
   const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteLinkFn } = useMutation({
+  const { mutateAsync: deleteLinkFn, isPending } = useMutation({
     mutationFn: deleteLink,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
@@ -57,10 +57,14 @@ export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
           <span className="text-sm text-gray-500 leading-4 mr-5 text-nowrap">
             {redirectCount} acessos
           </span>
-          <IconButton onClick={copyLinkToClipboard}>
+          <IconButton onClick={copyLinkToClipboard} disabled={isPending}>
             <CopyIcon size={16} />
           </IconButton>
-          <IconButton className="ml-1" onClick={handleDeleteLink}>
+          <IconButton
+            className="ml-1"
+            onClick={handleDeleteLink}
+            disabled={isPending}
+          >
             <TrashIcon size={16} />
           </IconButton>
         </div>
