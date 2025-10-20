@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "./ui/button";
@@ -14,10 +16,15 @@ type Inputs = {
 export function CreateLink() {
   const queryClient = useQueryClient();
 
-  const { mutateAsync: createLinkFn, isPending } = useMutation({
+  const {
+    mutateAsync: createLinkFn,
+    isPending,
+    data: createLinkResponse,
+  } = useMutation({
     mutationFn: createLink,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      queryClient.refetchQueries({ queryKey: ["links"] });
     },
   });
 
@@ -32,6 +39,19 @@ export function CreateLink() {
     await createLinkFn({ url, slug });
     reset();
   };
+
+  useEffect(() => {
+    if (createLinkResponse?.message) {
+      switch (createLinkResponse.message) {
+        case "Slug already in use":
+          toast.error("Este link encurtado já está em uso. Tente outro.");
+          break;
+        default:
+          toast.error(createLinkResponse.message);
+          break;
+      }
+    }
+  }, [createLinkResponse]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex-5/12">
