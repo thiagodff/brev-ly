@@ -15,6 +15,7 @@ export function LinkItem({ url, slug, redirectCount }: LinkItemProps) {
     mutationFn: deleteLink,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["links"] });
+      queryClient.refetchQueries({ queryKey: ["links"] });
     },
   });
 

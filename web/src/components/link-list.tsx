@@ -35,9 +35,7 @@ export function LinkList() {
     mutationFn: exportCsvLinks,
   });
 
-  const isLinksListEmpty = Boolean(
-    linkList?.total === 0 || linkList?.error || !linkList
-  );
+  const isLinksListEmpty = Boolean(links.length === 0 || linkList?.error);
 
   const handleExportLinks = async () => {
     const { reportUrl } = await exportCsvFn();
@@ -62,13 +60,21 @@ export function LinkList() {
 
   useEffect(() => {
     const totalPages = Math.ceil((linkList?.total ?? 0) / 10);
-    if (linkList?.links && page <= totalPages) {
+    if (linkList?.links && page <= totalPages && !isFetching) {
       setLinks((oldLinks) => {
         const newLinks = linkList.links;
-        return [...oldLinks, ...newLinks];
+        const hasDuplicatedLinks = newLinks.some((newLink) =>
+          oldLinks.find((oldLink) => oldLink.slug === newLink.slug)
+        );
+        if (hasDuplicatedLinks && page !== 1) {
+          setPage(1);
+          queryClient.refetchQueries({ queryKey: ["links"] });
+          return oldLinks;
+        }
+        return page === 1 ? newLinks : [...oldLinks, ...newLinks];
       });
     }
-  }, [linkList?.links]);
+  }, [linkList?.links, isFetching]);
 
   return (
     <Card className="w-full flex-7/12">
