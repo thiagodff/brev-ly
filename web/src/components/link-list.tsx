@@ -59,14 +59,14 @@ export function LinkList() {
   };
 
   useEffect(() => {
-    const totalPages = Math.ceil((linkList?.total ?? 0) / 10);
-    if (linkList?.links && page <= totalPages && !isFetching) {
+    if (linkList?.links && !isFetching) {
       setLinks((oldLinks) => {
         const newLinks = linkList.links;
         const hasDuplicatedLinks = newLinks.some((newLink) =>
           oldLinks.find((oldLink) => oldLink.slug === newLink.slug)
         );
-        if (hasDuplicatedLinks && page !== 1) {
+        const total = linkList.total ?? 0;
+        if ((hasDuplicatedLinks || total < oldLinks.length) && page !== 1) {
           setPage(1);
           queryClient.refetchQueries({ queryKey: ["links"] });
           return oldLinks;
