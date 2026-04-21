@@ -23,11 +23,11 @@ services:
       - PORT=3333
       - NODE_ENV=development
       - DATABASE_URL=postgresql://docker:docker@db:5432/brevly
-      - CLOUDFLARE_ACCOUNT_ID=9cd06f76159c3be027717a8aad0a1ce5
-      - CLOUDFLARE_ACCESS_KEY_ID=06debfdc11f2ea44f52ba26d0dac32aa
-      - CLOUDFLARE_SECRET_ACCESS_KEY=511b313e726a282b3bf4e4b955097227305cdc3b8a1f0a463daa43aad0eb60ee
-      - CLOUDFLARE_BUCKET=upload-server
-      - CLOUDFLARE_PUBLIC_URL=https://pub-23fcf4ea20c74b739fa0b80ab4992824.r2.dev
+      - CLOUDFLARE_ACCOUNT_ID=
+      - CLOUDFLARE_ACCESS_KEY_ID=
+      - CLOUDFLARE_SECRET_ACCESS_KEY=
+      - CLOUDFLARE_BUCKET=
+      - CLOUDFLARE_PUBLIC_URL=
     volumes:
       - app:/var/lib/src
     depends_on:

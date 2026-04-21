@@ -102,6 +102,7 @@ Frontend runs at `http://localhost:5173`.
 To run the backend and database entirely in Docker:
 
 ```bash
+# update the credentials in docker-compose.yml file
 cd server
 docker-compose up -d
 ```
